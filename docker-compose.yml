@@ -1,0 +1,32 @@
+services:
+  api:
+    container_name: api
+    build: ./back #Dockerfile do node se encontra na pasta atual
+    ports:
+      - 4000:4000
+    env_file:
+      - ./back/.env #configurar DATABASE_URL
+
+  spa:
+    container_name: spa # nome do container do react
+    build: ./front # builda e move os arquivos para o volume react
+    volumes: 
+     - react-volume:/var/www/html
+  
+  nginx:
+    container_name: nginx # nome do container
+    build: ./nginx # busca os arquivos no diretorio apontado no Dockerfile e cria um servidor web
+    ports:
+      - 80:80 # 80 externo 80 interno
+    volumes: 
+     - react-volume:/var/www/html
+    depends_on:
+      - api
+      - spa   
+
+
+
+
+
+volumes:
+  react-volume: # volume para o react e nginx
